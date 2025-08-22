@@ -1,0 +1,48 @@
+# ==========================
+# Python
+# ==========================
+# Bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Virtual environments
+venv/
+env/
+server/venv/
+
+# Instance folder (Flask)
+instance/
+
+# Database files
+*.db
+server/app.db
+
+# ==========================
+# Node / JavaScript
+# ==========================
+node_modules/
+package-lock.json
+npm-debug.log
+yarn.lock
+
+# ==========================
+# Firebase / Google Cloud
+# ==========================
+# Firebase service account / credentials
+server/serviceKey.json
+
+# ==========================
+# IDE / Editor
+# ==========================
+.vscode/
+*.sublime-workspace
+*.sublime-project
+*.swp
+.DS_Store
+
+# ==========================
+# Logs
+# ==========================
+*.log
