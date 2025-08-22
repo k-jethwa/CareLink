@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "mentalhealthapp-b4cd9",
+  "private_key_id": "b8392d4a3887eb747cc527222bae9c62e7ac3506",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCllxWs7XTVz88h\nDCT2sHQbRibwZw5m3/Dcu63Pfm1reOsbfHKN5SBQimh8koQjBFu86Th14B8/Mz8y\ncCEDZIBSccBL9Zhn8CjRIoQm4Qooau0X0Qfj0g2GhFUEKBLUrInqJCwdYdTQntjM\nDbaxITl6gKzzW0LUopXPszKHVDFKuNUlk4PMUxSpzOG/2lCQw4Ra6x6TiOo83hBV\npLrJtNuMCDW3jJuPf3DYQ46E12kqKZStzJH/6tJ3GPfcN65g9GgsKBOdFaKGIlAe\nxoZfJMFxhK2xl5vRDqdLlzBlgHTNmYKKPHR+Uh6fkBoGNfv2xJ1JGNl4YktcdYjw\nylNpbD3hAgMBAAECggEAHzkpW6WcubJJDqSxFZj5E6l7Lypng0tnqd9zqyPeMv0m\na9Tf7tSM7tLiV9bytn2cZLcfL87WZX7exD5zYyXgsmsDhO8m0TZuI90byQ728N8U\nnMCL+c/CQCKUu0dpIZP1H2K5tMKdM8c3/uX5FFY89dXshqinJdwQXo0eEnl0H/AD\nj0rQBOX+W2TzwmUy48eAZB8J9xqLgC3MBT0u+tX3Q+FZXiFuWg4SKA9zPq6B3ier\n/RlXaKZuqIMFdA0AsWkke3MQ5ONhvzSpl8Z8YCjwplZm30DxwaLpWYj3sJkWvfZX\nyfMaqBbSAA8tB1maeDNDYlhlhuX4GgMENhzyZo8DSQKBgQDO/V4tMg/TlHatw8m7\nL2M71e8qB+WRbYq2Xv0JHOWnkhQKagasNYczKNpkR3izwCsarbwhXOk/BnDlmh+D\nbrbJuppYKg1li92MPtsGlVFpD/1CNCTg9oHCH23A1r7/JzWuQOvuGcJIaWJDQGmB\nuHU7OUY6UA37I+ZcVWrYc4MXjQKBgQDMzEsawnOpoToBU490KZb4baDQDQ0+654h\n9OPUGtrSnRSy4VOq5SnHfyvG1JpkEZOenu39JPD0hwwHDJsunWQEv5nNeS3dxlB5\nVDARCWhEb5gc3nSVcvIC1tNNvLVv6RggjqddbC+Wbdb5aNey9T1GfyfsVFntbQqO\nGti7U1pQpQKBgB8Bcw8AFcDS12g2EMzaT1oSNM4t+qRrLUEeP3cS/g+44QmiUjeP\nmR3/u58T2a/LVGmdprW0rjfDpjuud5P/jJ/xNNeKDRGt/tTYQYTd7yD2xTAakX+l\nTVCf1pfxUxDzdaYRkYXME/820gJS7rsAv4bMkImBnmaFPSeNoACmZPetAoGAC+sf\nu9DxNkABxi38vT/mX1LR9wmraawAqe08jQ17CqLFn5tpaRqpEcke3RVmXsh/FM4e\n/4p002ZAlvBu34mdVoFoDAMvXia6bDUwDu3DOahc6+EuW7wyxWOHLJD85iRkmRB0\nQQWYx2JhDmbBltKa3E1uH1zRVvXvlVGOp2g0a1kCgYEAkDuoL+Aq1g+I5X3NsFCd\nhmXT0J49EyMF5m5eykVWCBNL4tFT2ysE7lvmAusjlLvBxhKB68bPeSV3eExSiq1L\nJsfljMYao8ZdlkmqQYyUveIpetALsBycb23oYC+s3MOIuqfccVwUZW8TG0eO2n/E\n/ISuo+Cb8jXLlI2zbuPBFRU=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@mentalhealthapp-b4cd9.iam.gserviceaccount.com",
+  "client_id": "116548696782470780368",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40mentalhealthapp-b4cd9.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
