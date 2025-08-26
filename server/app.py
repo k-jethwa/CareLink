@@ -8,6 +8,10 @@ import json
 from datetime import datetime
 import logging
 
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
 CORS(app)
 
@@ -33,13 +37,13 @@ def add_contact():
     try:
         db.insert_contact(uid, name, email)
         contacts = db.get_contacts(uid)
-        logger.info(f"Contact added for user {uid}: {name} ({email})") #debugging
+        logger.info(f"Contact added for user {uid}: {name} ({email})")
         return jsonify({
             "message": "Contact added successfully",
             "contacts": contacts
         }), 201
     except Exception as e:
-        logger.error(f"Error adding contact: {e}") #debugging
+        logger.error(f"Error adding contact: {e}")
         return jsonify({"error": "Failed to add contact"}), 500
 
 
@@ -83,7 +87,6 @@ def create_checkin():
         if not date:
             return jsonify({'error': 'Date is required'}), 400
         
-    
         mood_analysis = ml.analyze_mood(journal)
         mood = mood_analysis['mood']
         color = mood_analysis['color']
@@ -100,6 +103,10 @@ def create_checkin():
             'color': color,
             'message': 'Check-in created successfully'
         }), 201
+    
+    except Exception as e:
+        logger.error(f"Error creating check-in: {e}")
+        return jsonify({'error': 'Failed to create check-in'}), 500
 
 
 @app.route('/api/checkins/<uid>', methods=['GET'])
@@ -122,14 +129,14 @@ def get_user_checkins_endpoint(uid):
 
 @app.route("/api/analytics/<uid>", methods=["GET"])
 def get_user_analytics(uid):
-    user, error_response, status_code = verify_firebase_token()
-    if error_response:
-        return error_response, status_code
-    
-    if user["uid"] != uid:
-        return jsonify({"error": "Unauthorized"}), 403
-
     try:
+        user, error_response, status_code = verify_firebase_token()
+        if error_response:
+            return error_response, status_code
+        
+        if user["uid"] != uid:
+            return jsonify({"error": "Unauthorized"}), 403
+
         checkins = db.get_checkins(uid)
         
         mood_counts = {"happy": 0, "sad": 0, "neutral": 0}
