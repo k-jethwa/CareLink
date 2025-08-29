@@ -1,0 +1,6 @@
+# Local Netlify folder
+.netlify
+serviceKey.json
+Procfile
+package-lock.json
+package.json
