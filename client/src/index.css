@@ -1,1 +1,379 @@
 @import "tailwindcss";
+
+@import "tailwindcss";
+
+/* Cozy Minimalist Pastel Design System */
+:root {
+  /* Pastel Color Palette */
+  --color-cream: #fefcf8;
+  --color-blush: #fce4ec;
+  --color-mint: #e8f5e8;
+  --color-lavender: #f3e5f5;
+  --color-sky: #e3f2fd;
+  --color-peach: #ffe0b2;
+  --color-sage: #e8f5e8;
+  
+  /* Text Colors */
+  --color-text-primary: #4a5568;
+  --color-text-secondary: #718096;
+  --color-text-accent: #805ad5;
+  
+  /* Background Colors */
+  --color-bg-primary: #fefcf8;
+  --color-bg-secondary: #f7fafc;
+  --color-bg-accent: #fce4ec;
+  
+  /* Border Colors */
+  --color-border-light: #e2e8f0;
+  --color-border-medium: #cbd5e0;
+  
+  /* Shadow Colors */
+  --color-shadow-light: rgba(148, 163, 184, 0.1);
+  --color-shadow-medium: rgba(148, 163, 184, 0.15);
+}
+
+/* Gentle Cozy Background - Main gradient */
+body {
+  background: linear-gradient(135deg, #fefcf8 0%, #fce4ec 25%, #e8f5e8 50%, #f3e5f5 75%, #e3f2fd 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Ensure the root element also has the background */
+#root {
+  min-height: 100vh;
+  background: inherit;
+}
+
+/* Floating geometric shapes - made more visible */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    /* Large soft circles - increased opacity */
+    radial-gradient(circle at 20% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 60%),
+    radial-gradient(circle at 80% 30%, rgba(147, 51, 234, 0.12) 0%, transparent 60%),
+    radial-gradient(circle at 40% 70%, rgba(34, 197, 94, 0.14) 0%, transparent 60%),
+    radial-gradient(circle at 85% 80%, rgba(59, 130, 246, 0.10) 0%, transparent 60%),
+    
+    /* Medium soft blobs - increased opacity */
+    radial-gradient(ellipse at 15% 60%, rgba(236, 72, 153, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse at 70% 15%, rgba(147, 51, 234, 0.10) 0%, transparent 70%),
+    radial-gradient(ellipse at 90% 50%, rgba(34, 197, 94, 0.06) 0%, transparent 70%),
+    
+    /* Small gentle dots - increased opacity */
+    radial-gradient(circle at 25% 40%, rgba(236, 72, 153, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 75% 65%, rgba(147, 51, 234, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 50% 25%, rgba(34, 197, 94, 0.10) 0%, transparent 40%),
+    radial-gradient(circle at 10% 85%, rgba(59, 130, 246, 0.08) 0%, transparent 40%);
+  
+  z-index: -2;
+  pointer-events: none;
+}
+
+/* Wave pattern overlay - made more visible */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    /* Gentle horizontal waves - increased opacity */
+    linear-gradient(90deg, transparent 0%, rgba(236, 72, 153, 0.04) 25%, transparent 50%, rgba(147, 51, 234, 0.04) 75%, transparent 100%),
+    linear-gradient(180deg, transparent 0%, rgba(34, 197, 94, 0.03) 33%, transparent 66%, rgba(59, 130, 246, 0.03) 100%);
+  
+  background-size: 200px 200px, 300px 300px;
+  background-repeat: repeat;
+  z-index: -3;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+/* Grid pattern - made more visible */
+#root::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(236, 72, 153, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(147, 51, 234, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  z-index: -4;
+  pointer-events: none;
+}
+
+/* Additional decorative elements for more visual interest */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    /* Additional floating elements */
+    radial-gradient(circle at 5% 10%, rgba(255, 182, 193, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 95% 20%, rgba(173, 216, 230, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 10% 90%, rgba(144, 238, 144, 0.07) 0%, transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(221, 160, 221, 0.06) 0%, transparent 50%);
+  
+  z-index: -5;
+  pointer-events: none;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-medium);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}
+
+/* Smooth Transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Focus States */
+*:focus {
+  outline: 2px solid var(--color-text-accent);
+  outline-offset: 2px;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+  @apply bg-gradient-to-r from-pink-400 to-pink-500 text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 font-medium;
+}
+
+.btn-secondary {
+  @apply bg-gradient-to-r from-blue-400 to-blue-500 text-white px-6 py-3 rounded-2xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 font-medium;
+}
+
+.btn-outline {
+  @apply border-2 border-pink-300 text-pink-600 px-6 py-3 rounded-2xl hover:bg-pink-50 transition-all duration-200 font-medium;
+}
+
+/* Custom Card Styles */
+.card {
+  @apply bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 p-6 hover:shadow-xl transition-all duration-300;
+}
+
+.card-hover {
+  @apply transform hover:-translate-y-1 hover:shadow-2xl;
+}
+
+/* Custom Input Styles */
+.input-field {
+  @apply w-full px-4 py-3 rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition-all duration-200 bg-white/90 backdrop-blur-sm;
+}
+
+.input-field:focus {
+  @apply outline-none;
+}
+
+/* Custom Modal Styles */
+.modal-overlay {
+  @apply fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center p-4 z-50;
+}
+
+.modal-content {
+  @apply bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-white/30 max-w-md w-full mx-4;
+}
+
+/* Custom Range Slider Styles */
+.slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, #fbbf24 0%, #f59e0b 50%, #d97706 100%);
+  outline: none;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: 2px solid #f59e0b;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  cursor: pointer;
+  border: 2px solid #f59e0b;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Animation Classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-in-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Responsive Typography */
+.text-responsive-xl {
+  @apply text-2xl md:text-3xl lg:text-4xl;
+}
+
+.text-responsive-lg {
+  @apply text-xl md:text-2xl lg:text-3xl;
+}
+
+.text-responsive-md {
+  @apply text-lg md:text-xl lg:text-2xl;
+}
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 640px) {
+  .card {
+    @apply p-4;
+  }
+  
+  .modal-content {
+    @apply mx-2 max-w-sm;
+  }
+  
+  .btn-primary,
+  .btn-secondary,
+  .btn-outline {
+    @apply px-4 py-2 text-sm;
+  }
+  
+  .input-field {
+    @apply px-3 py-2 text-sm;
+  }
+}
+
+/* Enhanced Hover Effects */
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+
+.btn-outline:hover {
+  transform: translateY(-1px);
+}
+
+/* Glassmorphism Effects */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Subtle Text Shadows */
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Focus States for Accessibility */
+.input-field:focus,
+.btn-primary:focus,
+.btn-secondary:focus,
+.btn-outline:focus {
+  outline: 2px solid var(--color-text-accent);
+  outline-offset: 2px;
+  transform: scale(1.02);
+}
+
+/* Responsive Layout Enhancements */
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 {
+    grid-template-columns: 1fr 2fr;
+  }
+  
+  .lg\:col-span-1 {
+    grid-column: span 1;
+  }
+  
+  .lg\:col-span-2 {
+    grid-column: span 2;
+  }
+}
+
+/* Check-in Status Styles */
+.checkin-completed {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-color: #10b981;
+}
+
+.checkin-pending {
+  background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+  border-color: #ec4899;
+}
+
+/* Status Icon Animations */
+.status-icon {
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes statusPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}

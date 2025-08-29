@@ -1,12 +1,14 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from auth import verify_firebase_token
+import firebase_config
 import db
 import ml
-from email_utils import send_emergency_email
+from emails import send_emergency_email
 import json
 from datetime import datetime
 import logging
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -72,7 +74,7 @@ def create_checkin():
         if error_response:
             return error_response, status_code
         
-        uid = user["uid"]  # Extract uid from decoded token
+        uid = user["uid"]
         
         data = request.get_json()
         if not data:
@@ -95,7 +97,14 @@ def create_checkin():
         
         sad_count = len(db.get_recent_sad_checkins(uid, days=7))
         if sad_count >= 3:
-            send_emergency_email(uid, answers)  
+            # FIXED: Pass complete checkin data
+            checkin_data = {
+                'mood': mood,
+                'journal': journal,
+                'hours_of_sleep': hours_of_sleep,
+                'answers': answers
+            }
+            send_emergency_email(uid, checkin_data)
         
         return jsonify({
             'success': True,
@@ -186,6 +195,7 @@ def handle_exception(e):
 
     
 if __name__ == "__main__":
+    os.makedirs('instance', exist_ok=True)
     db.init_db()
     db.migrate_existing_data()
     app.run(debug=True, host="0.0.0.0", port=5001)

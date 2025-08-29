@@ -7,26 +7,26 @@ logger = logging.getLogger(__name__)
 
 def send_emergency_email(uid: str, checkin_data: dict):
     timestamp = datetime.now().isoformat()
-    
     logger.warning(f"🚨 EMERGENCY EMAIL TRIGGERED at {timestamp}")
     logger.warning(f"User ID: {uid}")
     logger.warning(f"Check-in data: {checkin_data}")
     
+    # FIXED: Use correct keys from the data structure
     mood = checkin_data.get('mood', 'unknown')
-    journal_entry = checkin_data.get('reflections', 'No journal entry')
-    sleep_hours = checkin_data.get('sleep', 'Not specified')
+    journal_entry = checkin_data.get('journal', 'No journal entry')  # Changed from 'reflections'
+    sleep_hours = checkin_data.get('hours_of_sleep', 'Not specified')  # Changed from 'sleep'
     
     email_content = f"""
     EMERGENCY ALERT - User {uid} has had multiple sad days
-    
+
     Current Check-in Details:
     - Mood: {mood}
     - Sleep: {sleep_hours} hours
+    - Journal Entry: {journal_entry[:100]}...
     - Timestamp: {timestamp}
-    
+
     You should reach out and check up on them!
     """
-    
     
     # TODO: Implement actual email sending
     # Example implementation:

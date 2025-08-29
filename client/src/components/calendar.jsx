@@ -1,45 +1,104 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { auth } from "../components/firebase";
 
-export default function MoodCalendar({ moodData = [] }) {
+export default function MoodCalendar({ refreshKey = 0 }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [checkins, setCheckins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Enhanced mood colors with better contrast and visual appeal
+  // Fetch check-ins from backend whenever refreshKey changes
+  useEffect(() => {
+    const fetchCheckins = async () => {
+      setLoading(true);
+      setError(null);
+      
+      const user = auth.currentUser;
+      if (!user) {
+        console.log("No authenticated user found");
+        setLoading(false);
+        setCheckins([]);
+        return;
+      }
+
+      try {
+        const token = await user.getIdToken(true);
+        const uid = user.uid;
+
+        console.log('Fetching check-ins for user:', uid);
+        console.log('Making request to:', `http://127.0.0.1:5001/api/checkins/${uid}`);
+
+        const res = await fetch(`http://127.0.0.1:5001/api/checkins/${uid}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        console.log('Response status:', res.status);
+
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+
+        const data = await res.json();
+        console.log('Response data:', data);
+
+        if (data.success && Array.isArray(data.checkins)) {
+          setCheckins(data.checkins);
+          console.log(`Successfully loaded ${data.checkins.length} check-ins`);
+        } else {
+          console.log("Invalid response format or no checkins found");
+          setCheckins([]);
+        }
+      } catch (err) {
+        console.error("Error fetching check-ins:", err);
+        setError(err.message);
+        setCheckins([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCheckins();
+  }, [refreshKey]);
+
+  // Mood color & emoji mappings
   const moodColors = {
-    happy: "#10B981",     // emerald green
-    neutral: "#F59E0B",   // amber
-    sad: "#8B5CF6",       // violet
-    anxious: "#EF4444"    // red
+    happy: "#A8E6CF",
+    neutral: "#FFD3B6",
+    sad: "#FF8B94"
   };
 
-  // Mood emoji mapping for better visual representation
   const moodEmojis = {
     happy: "😊",
-    neutral: "😐", 
-    sad: "😔",
-    anxious: "😰"
+    neutral: "😐",
+    sad: "😔"
   };
 
-  // Get mood for a specific date
+  // Get mood data for a specific date
   const getMoodForDate = (date) => {
-    const dateString = date.toISOString().split('T')[0];
-    const entry = moodData.find(d => d.date === dateString);
-    return entry ? entry.mood : null;
+    const dateString = date.toISOString().split("T")[0];
+    const entry = checkins.find(d => d.date === dateString);
+    if (entry) {
+      return {
+        mood: entry.mood,
+        color: entry.color || moodColors[entry.mood] || moodColors.neutral,
+        hours_of_sleep: entry.hours_of_sleep
+      };
+    }
+    return null;
   };
 
-  // Calendar utility functions
-  const getDaysInMonth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-  };
-
-  const getFirstDayOfMonth = (date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-  };
-
-  const getMonthName = (date) => {
-    return date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  };
+  // Calendar helpers
+  const getDaysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+  const getFirstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
+  const getMonthName = (date) => date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const isToday = (date) => date.toDateString() === new Date().toDateString();
+  const isSameDate = (date1, date2) => date1.toDateString() === date2.toDateString();
 
   const navigateMonth = (direction) => {
     setCurrentDate(prev => {
@@ -49,30 +108,15 @@ export default function MoodCalendar({ moodData = [] }) {
     });
   };
 
-  const isToday = (date) => {
-    const today = new Date();
-    return date.toDateString() === today.toDateString();
-  };
-
-  const isSameDate = (date1, date2) => {
-    return date1.toDateString() === date2.toDateString();
-  };
-
-  // Generate calendar days
   const generateCalendarDays = () => {
     const daysInMonth = getDaysInMonth(currentDate);
     const firstDay = getFirstDayOfMonth(currentDate);
     const days = [];
 
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < firstDay; i++) {
-      days.push(null);
-    }
+    for (let i = 0; i < firstDay; i++) days.push(null);
 
-    // Add days of the month
     for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-      days.push(date);
+      days.push(new Date(currentDate.getFullYear(), currentDate.getMonth(), day));
     }
 
     return days;
@@ -81,148 +125,155 @@ export default function MoodCalendar({ moodData = [] }) {
   const calendarDays = generateCalendarDays();
   const selectedMood = getMoodForDate(selectedDate);
 
+  // Unique moods for legend
+  const uniqueMoods = [...new Set(checkins.map(c => c.mood))];
+  const moodLegendData = uniqueMoods.map(mood => {
+    const checkin = checkins.find(c => c.mood === mood);
+    return {
+      mood,
+      color: checkin?.color || moodColors[mood] || moodColors.neutral
+    };
+  });
+
+  const formatDate = (date) => date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+
+  if (loading) {
+    return (
+      <div className="text-center p-6">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600 mx-auto mb-4"></div>
+        <p className="text-pink-600">Loading your mood calendar...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center p-6">
+        <div className="text-red-600 mb-4">
+          <p className="text-lg font-semibold">Unable to load calendar</p>
+          <p className="text-sm">Error: {error}</p>
+        </div>
+        <button 
+          onClick={() => window.location.reload()} 
+          className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-xl shadow-lg border border-gray-100">
+    <div className="max-w-4xl mx-auto p-6">
       {/* Header */}
-      <div className="text-center mb-6">
-        <h2 className="text-3xl font-bold text-gray-800 mb-2">Mood Calendar</h2>
-        <p className="text-gray-600">Track your daily emotions</p>
+      <div className="text-center mb-8">
+        <h2 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-3">
+          Mood Calendar
+        </h2>
+        <p className="text-pink-600 text-lg">Track your daily emotions and patterns</p>
       </div>
 
       {/* Calendar Navigation */}
-      <div className="flex items-center justify-between mb-4 p-2 bg-gray-50 rounded-lg">
-        <button 
-          onClick={() => navigateMonth(-1)}
-          className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5 text-gray-600" />
-        </button>
-        
-        <h3 className="text-lg font-semibold text-gray-800">
-          {getMonthName(currentDate)}
-        </h3>
-        
-        <button 
-          onClick={() => navigateMonth(1)}
-          className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
-        >
-          <ChevronRight className="w-5 h-5 text-gray-600" />
-        </button>
+      <div className="bg-gradient-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-2xl shadow-lg mb-6">
+        <div className="flex items-center justify-between p-4">
+          <button onClick={() => navigateMonth(-1)} className="p-3 hover:bg-pink-100 rounded-xl transition-colors duration-200 group">
+            <ChevronLeft className="w-6 h-6 text-pink-600 group-hover:text-pink-700" />
+          </button>
+          <h3 className="text-xl font-semibold text-pink-700">{getMonthName(currentDate)}</h3>
+          <button onClick={() => navigateMonth(1)} className="p-3 hover:bg-pink-100 rounded-xl transition-colors duration-200 group">
+            <ChevronRight className="w-6 h-6 text-pink-600 group-hover:text-pink-700" />
+          </button>
+        </div>
       </div>
 
-      {/* Weekday Headers */}
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="p-2 text-center text-sm font-semibold text-gray-600">
-            {day}
-          </div>
+      <div className="grid grid-cols-7 gap-2 mb-4">
+        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(day => (
+          <div key={day} className="p-3 text-center text-sm font-semibold text-pink-600 bg-pink-50 rounded-xl">{day}</div>
         ))}
       </div>
 
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-1 mb-6">
+      <div className="grid grid-cols-7 gap-2 mb-8">
         {calendarDays.map((date, index) => {
-          if (!date) {
-            return <div key={index} className="p-2 h-12"></div>;
-          }
+          if (!date) return <div key={index} className="p-3 h-16"></div>;
 
-          const mood = getMoodForDate(date);
+          const moodData = getMoodForDate(date);
           const isSelectedDate = isSameDate(date, selectedDate);
           const isTodayDate = isToday(date);
 
           return (
-            <button
-              key={index}
-              onClick={() => setSelectedDate(date)}
-              className={`
-                relative p-2 h-12 rounded-lg border transition-all duration-200 hover:shadow-md
-                ${isSelectedDate 
-                  ? 'bg-blue-500 text-white border-blue-500 shadow-md' 
-                  : isTodayDate 
-                    ? 'bg-blue-50 border-blue-200 text-blue-700'
-                    : 'bg-white border-gray-200 hover:bg-gray-50'
-                }
-              `}
+            <button key={index} onClick={() => setSelectedDate(date)}
+              className={`relative p-3 h-16 rounded-xl border-2 transition-all duration-200 hover:scale-105 ${
+                isSelectedDate ? 'border-pink-400 bg-pink-50 shadow-lg' :
+                isTodayDate ? 'border-pink-300 bg-pink-100 shadow-md' :
+                'border-gray-200 bg-white hover:border-pink-200 hover:bg-pink-50'
+              }`}
             >
-              <span className={`text-sm font-medium ${isSelectedDate ? 'text-white' : 'text-gray-700'}`}>
+              <span className={`block text-sm font-medium ${isSelectedDate ? 'text-pink-700' : 'text-gray-700'}`}>
                 {date.getDate()}
               </span>
-              
-              {mood && (
-                <div 
-                  className="absolute bottom-1 right-1 w-3 h-3 rounded-full border border-white shadow-sm"
-                  style={{ backgroundColor: moodColors[mood] }}
-                  title={`Mood: ${mood}`}
-                ></div>
+              {moodData && (
+                <>
+                  <div className="absolute bottom-1 right-1 w-4 h-4 rounded-full border-2 border-white shadow-sm"
+                    style={{ backgroundColor: moodData.color }}
+                    title={`Mood: ${moodData.mood}`}></div>
+                  {moodData.hours_of_sleep && (
+                    <div className="absolute top-1 left-1">
+                      <div className="bg-blue-100 text-blue-700 text-xs px-1 py-0.5 rounded-full font-medium">
+                        {moodData.hours_of_sleep}h
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
             </button>
           );
         })}
       </div>
 
-      {/* Selected Date Mood Display */}
       {selectedMood && (
-        <div className="p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">
-            {selectedDate.toLocaleDateString('en-US', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
-          </h3>
-          <div className="flex items-center justify-center space-x-3">
-            <div 
-              className="w-8 h-8 rounded-full flex items-center justify-center shadow-sm"
-              style={{ backgroundColor: moodColors[selectedMood] }}
-            >
-              <span className="text-white text-sm">
-                {moodEmojis[selectedMood]}
-              </span>
+        <div className="bg-gradient-to-r from-pink-50 to-purple-50 border-2 border-pink-200 rounded-2xl shadow-lg p-6 mb-6">
+          <h4 className="text-lg font-semibold text-pink-700 mb-3 text-center">
+            {formatDate(selectedDate)} - Mood Summary
+          </h4>
+          <div className="flex items-center justify-center space-x-6">
+            <div className="text-center">
+              <div className="text-2xl mb-2">{moodEmojis[selectedMood.mood]}</div>
+              <div className="text-sm font-medium text-pink-600 capitalize">{selectedMood.mood} Mood</div>
             </div>
-            <span className="text-xl font-medium capitalize text-gray-700">
-              {selectedMood}
-            </span>
+            <div className="text-center">
+              <div className="w-8 h-8 rounded-full border-2 border-white shadow-sm mx-auto mb-2" style={{ backgroundColor: selectedMood.color }}></div>
+              <div className="text-sm font-medium text-pink-600">Mood Color</div>
+            </div>
+            {selectedMood.hours_of_sleep && (
+              <div className="text-center">
+                <div className="text-2xl mb-2">😴</div>
+                <div className="text-sm font-medium text-pink-600">{selectedMood.hours_of_sleep} hours sleep</div>
+              </div>
+            )}
           </div>
         </div>
       )}
 
-      {/* Mood Legend */}
-      <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-        <h4 className="text-sm font-semibold text-gray-700 mb-3 text-center">
-          Mood Legend
-        </h4>
-        <div className="grid grid-cols-2 gap-3">
-          {Object.entries(moodColors).map(([mood, color]) => (
-            <div key={mood} className="flex items-center space-x-2">
-              <div 
-                className="w-4 h-4 rounded-full shadow-sm"
-                style={{ backgroundColor: color }}
-              ></div>
-              <span className="text-sm capitalize text-gray-600 flex items-center space-x-1">
-                <span>{moodEmojis[mood]}</span>
-                <span>{mood}</span>
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
+      
 
-      {/* Stats Summary (if there's mood data) */}
-      {moodData.length > 0 && (
-        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-gray-200">
-          <h4 className="text-sm font-semibold text-gray-700 mb-2 text-center">
-            This Month's Overview
-          </h4>
+      {/* Monthly Overview */}
+      {checkins.length > 0 && (
+        <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-2xl shadow-lg p-6">
+          <h4 className="text-lg font-semibold text-green-700 mb-3 text-center">This Month's Overview</h4>
           <div className="text-center">
-            <span className="text-2xl font-bold text-blue-600">
-              {moodData.filter(d => {
+            <span className="text-3xl font-bold text-green-600">
+              {checkins.filter(d => {
                 const entryDate = new Date(d.date);
-                return entryDate.getMonth() === currentDate.getMonth() && 
+                return entryDate.getMonth() === currentDate.getMonth() &&
                        entryDate.getFullYear() === currentDate.getFullYear();
               }).length}
             </span>
-            <span className="text-sm text-gray-600 ml-1">days tracked</span>
+            <span className="text-sm text-green-600 ml-2">days tracked</span>
           </div>
         </div>
       )}
